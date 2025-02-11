@@ -1,22 +1,68 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-
+import { removeConsoleLogs } from './utils';
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
+
+;
+
 export function activate(context: vscode.ExtensionContext) {
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "smart-console-remover" is now active!');
-
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('smart-console-remover.helloWorld', () => {
+	const disposable = vscode.commands.registerCommand('smart-console-remover.smartConsoleRemover', async() => {
 		// The code you place here will be executed every time your command is executed
 		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from smart-console-remover!');
+		const activeEditor = vscode.window.activeTextEditor;
+		
+		if (!activeEditor) {
+			return;
+		}
+		
+		//check the language of file
+		if(activeEditor?.document.languageId === 'javascript'){
+
+			console.log('Your extension smart-console-remover', activeEditor?.document.languageId);
+
+			const document = activeEditor?.document;
+			const text = document.getText();
+			const regex = /console\.(log|warn|error|debug|info)\([\s\S]*?\)\s*;?/g;
+			// const regex = /\bhello\b/g;
+			const newText = removeConsoleLogs(text, "All");
+
+			const edits: vscode.TextEdit[] = [];
+
+			let match;
+
+			activeEditor.edit(editBuilder => {
+				const fullRange = new vscode.Range(
+					document.positionAt(0),
+					document.positionAt(text.length)
+				);
+				editBuilder.replace(fullRange, newText);
+			});
+			// while((match = regex.exec(text)) !== null) {
+			// 	console.log("match", match, regex.lastIndex);
+			// 	const fullRange = new vscode.Range(
+			// 		document.positionAt(match.index),
+			// 		document.positionAt(regex.lastIndex)
+			// 	);
+
+			// 	vscode.TextEdit.replace(fullRange, newText);
+			// }
+			
+			console.log("edits: ", edits);
+
+			// if (edits.length > 0) {
+			// 	const edit = new vscode.WorkspaceEdit();
+			// 	edit.set(document.uri, edits[0]);
+			// 	await vscode.workspace.applyEdit(edit);
+			// 	vscode.window.showInformationMessage(`Replaced ${edits.length} occurrences of "hello" with "hi"!`);
+			// } else {
+			// 	vscode.window.showInformationMessage('No occurrences of "hello" found.');
+			// }
+			
+			vscode.window.showInformationMessage(`Selected file extension: ${activeEditor.document.languageId}`);
+		}
 	});
 
 	context.subscriptions.push(disposable);

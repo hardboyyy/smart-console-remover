@@ -14,8 +14,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "smart-console-remover.helloWorld",
-        "title": "Hello World"
+        "command": "smart-console-remover.smartConsoleRemover",
+        "title": "Smart Console Remover"
       }
     ]
   },
