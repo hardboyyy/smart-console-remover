@@ -49,6 +49,7 @@ export function activate(context: vscode.ExtensionContext) {
 					document.positionAt(text.length)
 				);
 				editBuilder.replace(fullRange, newText);
+				vscode.window.showInformationMessage(`${edits.length - 1} console.logs has been removed successfully`);
 			});
 			
 			
