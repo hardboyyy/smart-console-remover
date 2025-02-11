@@ -1,7 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { removeConsoleLogs } from './utils';
+import { removeConsoleLogs, languageIds } from './utils';
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 
@@ -19,7 +19,7 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 		
 		//check the language of file
-		if(activeEditor?.document.languageId === 'javascript'){
+		if(languageIds.includes(activeEditor?.document.languageId)){
 
 			console.log('Your extension smart-console-remover', activeEditor?.document.languageId);
 
@@ -30,8 +30,18 @@ export function activate(context: vscode.ExtensionContext) {
 			const newText = removeConsoleLogs(text, "All");
 
 			const edits: vscode.TextEdit[] = [];
-
+			const counts: Number = 0;
 			let match;
+
+			while((match = regex.exec(text)) !== null) {
+				console.log("match", match, regex.lastIndex);
+				const fullRange = new vscode.Range(
+					document.positionAt(match.index),
+					document.positionAt(regex.lastIndex)
+				);
+
+				edits.push(vscode.TextEdit.replace(fullRange, newText));
+			}
 
 			activeEditor.edit(editBuilder => {
 				const fullRange = new vscode.Range(
@@ -40,15 +50,7 @@ export function activate(context: vscode.ExtensionContext) {
 				);
 				editBuilder.replace(fullRange, newText);
 			});
-			// while((match = regex.exec(text)) !== null) {
-			// 	console.log("match", match, regex.lastIndex);
-			// 	const fullRange = new vscode.Range(
-			// 		document.positionAt(match.index),
-			// 		document.positionAt(regex.lastIndex)
-			// 	);
-
-			// 	vscode.TextEdit.replace(fullRange, newText);
-			// }
+			
 			
 			console.log("edits: ", edits);
 

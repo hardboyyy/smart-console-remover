@@ -32,4 +32,17 @@ suite('Extension Test Suite', () => {
         const result = removeConsoleLogs(inputCode, 'console.log');
         assert.strictEqual(result.trim(), expectedOutput.trim());
     });
+
+	test('Should remove function-based console logs', async () => {
+        const inputCode = `
+        console.log('filter job', current(state.jobList), action.payload);
+        let a = 5;
+        `;
+        const expectedOutput = `
+        let a = 5;
+        `;
+
+        const result = removeConsoleLogs(inputCode, 'console.log');
+        assert.strictEqual(result.trim(), expectedOutput.trim());
+    });
 });
