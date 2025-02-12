@@ -19,7 +19,7 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 		
 		//check the language of file
-		if(languageIds.includes(activeEditor?.document.languageId)){
+		// if(languageIds.includes(activeEditor?.document.languageId)){
 
 			console.log('Your extension smart-console-remover', activeEditor?.document.languageId);
 
@@ -65,7 +65,7 @@ export function activate(context: vscode.ExtensionContext) {
 			// }
 			
 			vscode.window.showInformationMessage(`Selected file extension: ${activeEditor.document.languageId}`);
-		}
+		// }
 	});
 
 	context.subscriptions.push(disposable);
