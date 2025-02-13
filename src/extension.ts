@@ -17,9 +17,19 @@ export function activate(context: vscode.ExtensionContext) {
 		if (!activeEditor) {
 			return;
 		}
-		
-		//check the language of file
-		// if(languageIds.includes(activeEditor?.document.languageId)){
+		const options: vscode.QuickPickItem[] = [
+            { label: 'Remove', description: 'Remove all console statements' },
+            { label: 'Comment Out', description: 'Comment out all console statements' },
+            { label: 'Uncomment', description: 'Uncomment all console statements' }
+        ];
+
+		const selection = await vscode.window.showQuickPick(options, {
+            placeHolder: 'Choose an action for console statements'
+        });
+
+        if (!selection) {
+            return;
+        }
 
 			console.log('Your extension smart-console-remover', activeEditor?.document.languageId);
 
@@ -27,10 +37,13 @@ export function activate(context: vscode.ExtensionContext) {
 			const text = document.getText();
 			const regex = /console\.(log|warn|error|debug|info)\([\s\S]*?\)\s*;?/g;
 			// const regex = /\bhello\b/g;
-			const newText = removeConsoleLogs(text, "All");
+			// const selection = {
+			// 	label: "Remove",
+			// 	description: "remove the logs"
+			// };
+			const newText = removeConsoleLogs(text, selection.label);
 
 			const edits: vscode.TextEdit[] = [];
-			const counts: Number = 0;
 			let match;
 
 			while((match = regex.exec(text)) !== null) {
@@ -55,14 +68,6 @@ export function activate(context: vscode.ExtensionContext) {
 			
 			console.log("edits: ", edits);
 
-			// if (edits.length > 0) {
-			// 	const edit = new vscode.WorkspaceEdit();
-			// 	edit.set(document.uri, edits[0]);
-			// 	await vscode.workspace.applyEdit(edit);
-			// 	vscode.window.showInformationMessage(`Replaced ${edits.length} occurrences of "hello" with "hi"!`);
-			// } else {
-			// 	vscode.window.showInformationMessage('No occurrences of "hello" found.');
-			// }
 			
 			vscode.window.showInformationMessage(`Selected file extension: ${activeEditor.document.languageId}`);
 		// }
