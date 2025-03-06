@@ -5,7 +5,7 @@ import { removeConsoleLogs, languageIds } from './utils';
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 
-;
+const LOGGER_KEY_PREFIX = 'customLoggerName_';  // Prefix for storing logger names
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -17,6 +17,34 @@ export function activate(context: vscode.ExtensionContext) {
 		if (!activeEditor) {
 			return;
 		}
+		const documentUri = activeEditor.document.uri;
+    	const workspaceFolder = vscode.workspace.getWorkspaceFolder(documentUri);
+		if (!workspaceFolder) {
+			vscode.window.showErrorMessage('No workspace folder found!');
+			return;
+		}
+		const relativePath = vscode.workspace.asRelativePath(documentUri, false);
+    const folderPath = `${workspaceFolder.uri.fsPath}/${relativePath.split('/').slice(0, -1).join('/')}`;
+    const loggerKey = LOGGER_KEY_PREFIX + folderPath;  // Unique key per folder
+
+	let customLogger = context.workspaceState.get<string>(loggerKey);
+
+    // Ask for logger name only if not set for this folder
+    if (!customLogger) {
+        customLogger = await vscode.window.showInputBox({
+            prompt: `Enter a custom logger name for ${relativePath.split('/').slice(0, -1).join('/')} (or leave empty for default: console)`,
+            placeHolder: 'e.g., logger, morga',
+            ignoreFocusOut: true,
+        });
+
+        // Save the logger name if provided, otherwise default to 'console'
+        customLogger = customLogger?.trim() || 'console';
+        await context.workspaceState.update(loggerKey, customLogger);
+    }
+
+    const loggerPattern = `console|${customLogger}`;
+    const methodPattern = `log|warn|error|debug|info`;
+
 		const options: vscode.QuickPickItem[] = [
             { label: 'Remove', description: 'Remove all console statements' },
             { label: 'Comment Out', description: 'Comment out all console statements' },
@@ -41,7 +69,7 @@ export function activate(context: vscode.ExtensionContext) {
 			// 	label: "Remove",
 			// 	description: "remove the logs"
 			// };
-			const newText = removeConsoleLogs(text, selection.label);
+			const newText = removeConsoleLogs(text, selection.label, loggerPattern);
 
 			activeEditor.edit(editBuilder => {
 				const fullRange = new vscode.Range(
@@ -51,9 +79,6 @@ export function activate(context: vscode.ExtensionContext) {
 				editBuilder.replace(fullRange, newText);
 				vscode.window.showInformationMessage(`${(text.match(regex) || []).length} console.logs has been removed successfully`);
 			});
-
-			
-			vscode.window.showInformationMessage(`Selected file extension: ${activeEditor.document.languageId}`);
 		// }
 	});
 
