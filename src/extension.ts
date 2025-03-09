@@ -23,8 +23,8 @@ export function activate(context: vscode.ExtensionContext) {
 			vscode.window.showErrorMessage('No workspace folder found!');
 			return;
 		}
-		const relativePath = vscode.workspace.asRelativePath(documentUri, false);
-    const folderPath = `${workspaceFolder.uri.fsPath}/${relativePath.split('/').slice(0, -1).join('/')}`;
+	const relativePath = vscode.workspace.asRelativePath(documentUri, false);
+    const folderPath = workspaceFolder.uri.fsPath;
     const loggerKey = LOGGER_KEY_PREFIX + folderPath;
 
 	let customLogger = context.workspaceState.get<string>(loggerKey);
