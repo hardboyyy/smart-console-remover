@@ -12,8 +12,8 @@ suite('Extension Test Suite', () => {
 	test('Should remove single-line console logs', async () => {
         const inputCode = `console.log("Hello World");\nconst x = 10;`;
         const expectedOutput = `const x = 10;`;
-
-        const result = removeConsoleLogs(inputCode, 'console.log');
+        const loggerPattern = 'console|logger';
+        const result = removeConsoleLogs(inputCode, 'Remove', loggerPattern);
         assert.strictEqual(result, expectedOutput);
     });
 
@@ -29,7 +29,8 @@ suite('Extension Test Suite', () => {
         let a = 5;
         `;
 
-        const result = removeConsoleLogs(inputCode, 'console.log');
+        const loggerPattern = 'console|logger';
+        const result = removeConsoleLogs(inputCode, 'Comment Out', loggerPattern);
         assert.strictEqual(result.trim(), expectedOutput.trim());
     });
 
@@ -42,7 +43,8 @@ suite('Extension Test Suite', () => {
         let a = 5;
         `;
 
-        const result = removeConsoleLogs(inputCode, 'console.log');
+        const loggerPattern = 'console|logger';
+        const result = removeConsoleLogs(inputCode, 'Uncomment', loggerPattern);
         assert.strictEqual(result.trim(), expectedOutput.trim());
     });
 });
