@@ -10,6 +10,7 @@ A VS Code extension to remove or comment out `console.log` statements in JavaScr
 ✅ Comment out `console.log` instead of removing  
 ✅ Uncomment previously commented logs  
 ✅ Supports multi-line console statements  
+✅ Supports custom logger patterns (e.g., `logger.log`, `winston.info`).
 ✅ Works with JavaScript, TypeScript, React, Vue, Angular, and other frameworks  
 
 ---
@@ -39,6 +40,7 @@ A VS Code extension to remove or comment out `console.log` statements in JavaScr
 console.log("Debugging info:", data);
 console.warn("This is a warning!");
 console.error("Error detected!");
+logger.log("Hello");
 ```
 
 **After:**
@@ -54,12 +56,14 @@ console.error("Error detected!");
 ```js
 console.log("Fetching data...");
 console.log("Data received:", response);
+logger.log("Hello");
 ```
 
 **After:**
 ```js
 // console.log("Fetching data...");
 // console.log("Data received:", response);
+// logger.log("Hello");
 ```
 
 ---
@@ -90,12 +94,14 @@ console.log(
 ```js
 // console.log("Fetching data...");
 // console.warn("Something went wrong!");
+// logger.log("Hello");
 ```
 
 **After:**
 ```js
 console.log("Fetching data...");
 console.warn("Something went wrong!");
+logger.log("Hello");
 ```
 
 ---
