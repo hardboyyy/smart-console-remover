@@ -1,13 +1,13 @@
 {
   "name": "smart-console-remover",
-  "displayName": "smart-console-remover",
+  "displayName": "Smart Console Remover",
   "description": "An extension to remove console logs from your files.",
   "publisher": "HardikKuwar",
   "repository": {
     "type": "git",
     "url": "https://github.com/hardboyyy/smart-console-remover"
   },
-  "version": "0.0.2",
+  "version": "0.0.4",
   "engines": {
     "vscode": "^1.60.0"
   },

@@ -1,19 +1,20 @@
-export function removeConsoleLogs(code: string, action: string): string {
+export function removeConsoleLogs(code: string, action: string, loggerPattern: string): string {
     let regex: RegExp;
     if(action === 'Remove'){
-        regex = /console\.(log|warn|error|debug|info)\((?:[^)(]+|\((?:[^)(]+|\([^)(]*\))*\))*\);?/gs;
+        regex = new RegExp(`(${loggerPattern})\\.(log|warn|error|debug|info)\\((?:[^)(]+|\\((?:[^)(]+|\\([^)(]*\\))*\\))*\\);?`, 'gs');
         return code.replace(regex, '').replace(/^\s*[\r\n]/gm, '');
     } else if(action === 'Comment Out') {
-        regex = /^(\s*)(console\.(log|warn|error|debug|info)\(.*)/gm;
-        return code.replace(regex, '$1// $2');
+        regex = new RegExp(`(${loggerPattern})\\.(log|warn|error|debug|info)\\((?:[^)(]+|\\((?:[^)(]+|\\([^)(]*\\))*\\))*\\);?`, 'gs');
+        return code.replace(regex, match => {
+            // Comment out each line of the matched block
+            return match.split('\n').map(line => `// ${line}`).join('\n');
+        });
     } else if(action === 'Uncomment') {
-        regex = /^(\s*)\/\/\s*(console\.(log|warn|error|debug|info)\(.*)/gm;
-        return code.replace(regex, '$1$2');
+        regex = new RegExp(`^\\s*//\\s*(${loggerPattern})\\.(log|warn|error|debug|info)\\((?:[^)(]+|\\((?:[^)(]+|\\([^)(]*\\))*\\))*\\);?`, 'gms');
+        return code.replace(regex, match => {
+            // Uncomment by removing "// " or "//"
+            return match.replace(/(^\s*)\/\/\s?/gm, '$1');
+        });
     }
     return code;
 }
-
-export const languageIds: string[] = [
-    'javascript',
-    'typescript',
-];
