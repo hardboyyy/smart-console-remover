@@ -10,10 +10,10 @@ export function removeConsoleLogs(code: string, action: string, loggerPattern: s
             return match.split('\n').map(line => `// ${line}`).join('\n');
         });
     } else if(action === 'Uncomment') {
-        regex = new RegExp(`^\\s*//\\s*(${loggerPattern})\\.(log|warn|error|debug|info)\\((?:[^)(]+|\\((?:[^)(]+|\\([^)(]*\\))*\\))*\\);?`, 'gm');
+        regex = new RegExp(`^\\s*//\\s*(${loggerPattern})\\.(log|warn|error|debug|info)\\((?:[^)(]+|\\((?:[^)(]+|\\([^)(]*\\))*\\))*\\);?`, 'gms');
         return code.replace(regex, match => {
             // Uncomment by removing "// " or "//"
-            return match.replace(/^\s*\/\/\s*/, '');
+            return match.replace(/(^\s*)\/\/\s?/gm, '$1');
         });
     }
     return code;
